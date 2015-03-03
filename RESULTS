@@ -1,0 +1,38 @@
+# for a specific subset of $n training utterances
+n=100; for x in exp/*/decode*; do [ -d $x ] && echo $x|grep "/.*${n}/" && grep WER ${x}/wer_* | utils/best_wer.sh; done | sed '/^exp/d'
+
+# for all subsets including full set
+
+dev spks 5, test spks 14
+==========================
+%WER 56.60 [ 15149 / 26767, 988 ins, 5968 del, 8193 sub ] exp/mono50/decode_test/wer_5
+%WER 45.65 [ 12219 / 26767, 643 ins, 4455 del, 7121 sub ] exp/mono100/decode_test/wer_4
+%WER 41.81 [ 11191 / 26767, 687 ins, 3793 del, 6711 sub ] exp/mono200/decode_test/wer_3
+%WER 39.79 [ 10651 / 26767, 616 ins, 3749 del, 6286 sub ] exp/mono500/decode_test/wer_3
+%WER 38.60 [ 10333 / 26767, 644 ins, 3692 del, 5997 sub ] exp/mono/decode_test/wer_3
+
+%WER 57.01 [ 15259 / 26767, 1173 ins, 5430 del, 8656 sub ] exp/tri150/decode_test/wer_5
+%WER 45.44 [ 12163 / 26767, 936 ins, 3871 del, 7356 sub ] exp/tri1100/decode_test/wer_6
+%WER 40.67 [ 10885 / 26767, 870 ins, 3178 del, 6837 sub ] exp/tri1200/decode_test/wer_6
+%WER 36.09 [ 9660 / 26767, 703 ins, 2888 del, 6069 sub ] exp/tri1500/decode_test/wer_7
+%WER 27.60 [ 7388 / 26767, 729 ins, 1938 del, 4721 sub ] exp/tri1/decode_test/wer_6
+%WER 18.14 [ 4855 / 26767, 318 ins, 1661 del, 2876 sub ] exp/dnn4_pretrain-dbn_dnn/decode_test/wer_4
+
+%WER 58.06 [ 15542 / 26767, 1014 ins, 6224 del, 8304 sub ] exp/tri2b50/decode_test/wer_4
+%WER 44.81 [ 11995 / 26767, 892 ins, 4049 del, 7054 sub ] exp/tri2b100/decode_test/wer_5
+%WER 39.00 [ 10438 / 26767, 745 ins, 3380 del, 6313 sub ] exp/tri2b200/decode_test/wer_6
+%WER 33.16 [ 8875 / 26767, 726 ins, 2623 del, 5526 sub ] exp/tri2b500/decode_test/wer_6
+%WER 25.17 [ 6736 / 26767, 574 ins, 1969 del, 4193 sub ] exp/tri2b/decode_test/wer_6
+
+%WER 55.00 [ 14722 / 26767, 922 ins, 5806 del, 7994 sub ] exp/tri3b50/decode_test/wer_3
+%WER 56.50 [ 15124 / 26767, 896 ins, 6069 del, 8159 sub ] exp/tri3b50/decode_test.si/wer_4
+%WER 42.57 [ 11394 / 26767, 895 ins, 3624 del, 6875 sub ] exp/tri3b100/decode_test/wer_4
+%WER 44.30 [ 11858 / 26767, 1056 ins, 3577 del, 7225 sub ] exp/tri3b100/decode_test.si/wer_4
+%WER 36.34 [ 9727 / 26767, 885 ins, 2912 del, 5930 sub ] exp/tri3b200/decode_test/wer_5
+%WER 38.29 [ 10249 / 26767, 876 ins, 3044 del, 6329 sub ] exp/tri3b200/decode_test.si/wer_5
+%WER 29.12 [ 7795 / 26767, 853 ins, 2122 del, 4820 sub ] exp/tri3b500/decode_test/wer_5
+%WER 32.62 [ 8731 / 26767, 690 ins, 2569 del, 5472 sub ] exp/tri3b500/decode_test.si/wer_6
+%WER 21.99 [ 5885 / 26767, 602 ins, 1593 del, 3690 sub ] exp/tri3b/decode_test/wer_5
+%WER 25.53 [ 6833 / 26767, 670 ins, 1803 del, 4360 sub ] exp/tri3b/decode_test.si/wer_5
+
+
