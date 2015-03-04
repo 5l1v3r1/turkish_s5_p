@@ -38,8 +38,16 @@ num_trn_utt=$2
 featdir=mfcc
 
 # [[ $num_trn_utt =~ ^[0-9]+$ ]] returns true if $num_trn_utt is a number
-[[ $num_trn_utt =~ ^[0-9]+$ ]] && echo "Will train acoustic models on $num_trn_utt utterances" \
-	|| echo "Will train acoustic models on all utterances"
+[[ $num_trn_utt =~ ^[0-9]+$ ]] && echo "Stage $stage: Train acoustic models on $num_trn_utt utterances" \
+	|| echo "Stage $stage: Train acoustic models on all utterances"
+
+# Calculate num leaves and num Gauss from the number of utterances. 
+# Each Turkish utt is about 4 secs long; skip rate at 100 frames/sec; 80 params per Gauss mix (mean = 39, diag cov = 39, wt = 1);
+export num_trn_utt; 
+numGaussTri1=`perl -e '$x=int($ENV{num_trn_utt}*4*100/80); print "$x";'`;
+numLeavesTri1=`echo "$numGaussTri1/5" | bc`
+
+echo -e "#Triphone States = $numLeavesTri1 \n#Triphone Mix = $numGaussTri1";
 
 if [[ $stage -eq 1 ]]; then
 # If $num_trn_utt is empty (train full set), then run the data prep and feat generation part.
@@ -133,17 +141,23 @@ steps/train_deltas.sh --cmd "$train_cmd" \
 
 utils/mkgraph.sh data/lang exp/$tri1 exp/$tri1/graph
 
-#steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
-# exp/tri1/graph data/dev exp/tri1/decode_dev
+steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
+ exp/tri1/graph data/dev exp/tri1/decode_dev
 
-steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
- exp/$tri1/graph data/dev exp/$tri1/decode_dev
- 
-steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
+steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
  exp/$tri1/graph data/test exp/$tri1/decode_test
+
+steps/align_si.sh --nj "$train_nj" --cmd "$train_cmd" \
+  data/$train data/lang exp/$tri1 exp/${tri1_ali}
+  
+#steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
+# exp/$tri1/graph data/dev exp/$tri1/decode_dev
  
-steps/align_fmllr.sh --nj "$train_nj" --cmd "$train_cmd" \
- data/$train data/lang exp/$tri1 exp/${tri1_ali}
+#steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
+# exp/$tri1/graph data/test exp/$tri1/decode_test
+ 
+#steps/align_fmllr.sh --nj "$train_nj" --cmd "$train_cmd" \
+# data/$train data/lang exp/$tri1 exp/${tri1_ali}
 fi
 
 if [[ $stage -eq 5 ]]; then
@@ -194,7 +208,7 @@ fi
 
 if [[ $stage -eq 7 ]]; then
 # Karel's neural net recipe.                                                                                                                                        
-local/nnet/run_dnn.sh exp/$tri1 ${num_trn_utt}                                                                                                                                                 
+local/nnet/run_dnn.sh exp/$tri1 ${num_trn_utt}                                                                                                                                                  
 
 # Karel's CNN recipe.
 # local/nnet/run_cnn.sh

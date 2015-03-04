@@ -20,35 +20,54 @@
 
 . ./path.sh ## Source the tools/utils (import the queue.pl)
 
-# Config:
-gmmdir=$1  #exp/tri3
-num_trn_utt=$2
-echo "Using $gmmdir to generate fmllr feats"
-data_fmllr=data-fmllr-tri1${num_trn_utt}  #data-fmllr-tri3
+echo "$0 $@"  # Print the command line for logging
+
 stage=0 # resume training with --stage=N
 max_nj_decode=10 
+transform_dir=
+
 
 # End of config.
+[ -f ./path.sh ] && . ./path.sh; # source the path.
 . utils/parse_options.sh || exit 1;
 #
 
+if [ $# != 2 ]; then   
+   echo "main options (for others, see top of script file)"
+   echo "  --config <config-file>                           # config containing options"
+   echo "  --nj <nj>                                        # number of parallel jobs"
+   echo "  --cmd (utils/run.pl|utils/queue.pl <queue opts>) # how to run jobs."
+   echo "  --transform-dir <transform-dir>                  # where to find fMLLR transforms."
+   exit 1;
+fi
+
+# Config:
+gmmdir=$1  #exp/tri3
+num_trn_utt=$2
+data_fmllr=data-fmllr-tri1${num_trn_utt}  #data-fmllr-tri3
+echo "supplied transform dir = $transform_dir";
+
+
 if [ $stage -le 0 ]; then
   # Store fMLLR features, so we can train on them easily,
-  # test
+  # test  
   dir=$data_fmllr/test
+  [[ ! -z $transform_dir ]] && transform_dir_opt="--transform-dir $transform_dir/decode_test" || transform_dir_opt=""
   steps/nnet/make_fmllr_feats.sh --nj 10 --cmd "$train_cmd" \
-     --transform-dir $gmmdir/decode_test \
+     $transform_dir_opt \
      $dir data/test $gmmdir $dir/log $dir/data || exit 1
   # dev
   dir=$data_fmllr/dev
+  [[ ! -z $transform_dir ]] && transform_dir_opt="--transform-dir $transform_dir/decode_dev" || transform_dir_opt=""
   steps/nnet/make_fmllr_feats.sh --nj 5 --cmd "$train_cmd" \
-     --transform-dir $gmmdir/decode_dev \
+     $transform_dir_opt \
      $dir data/dev $gmmdir $dir/log $dir/data || exit 1
   # train
   dir=$data_fmllr/train
+  [[ ! -z $transform_dir ]] && transform_dir_opt="--transform-dir ${transform_dir}_ali" || transform_dir_opt=""
   steps/nnet/make_fmllr_feats.sh --nj 10 --cmd "$train_cmd" \
-     --transform-dir ${gmmdir}_ali \
-     $dir data/train $gmmdir $dir/log $dir/data || exit 1
+     $transform_dir_opt \
+     $dir data/train${num_trn_utt} $gmmdir $dir/log $dir/data || exit 1
   # split the data : 90% train 10% cross-validation (held-out)
   utils/subset_data_dir_tr_cv.sh $dir ${dir}_tr90 ${dir}_cv10 || exit 1
 fi
