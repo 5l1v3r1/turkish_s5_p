@@ -108,7 +108,7 @@ tri2b_ali=${tri2b}_ali
 tri3b=tri3b${num_trn_utt}
 tri3b_ali=${tri3b}_ali
 
-[[ -d $featdir ]] && utils/subset_data_dir.sh data/train ${num_trn_utt:-1000} data/train${num_trn_utt:-.1k}
+[[ -d $featdir -a ! -d data/train${num_trn_utt} ]] && utils/subset_data_dir.sh data/train ${num_trn_utt:-1000} data/train${num_trn_utt:-.1k}
 
 if [[ $stage -eq 3 ]]; then
 echo ============================================================================
