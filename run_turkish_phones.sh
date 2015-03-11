@@ -209,9 +209,39 @@ fi
 
 if [[ $stage -eq 7 ]]; then
 echo ============================================================================
-echo "                 tri2b_mpe : LDA + MLLT + MPE Training & Decoding          "
+echo "  Not supported yet    tri1_mpe : (Delta + Delta-Delta) + MPE Training & Decoding     "
 echo ============================================================================
-# Align tri2 system with train data.
+# Align tri1 system with train data. 
+# Use exp/${tri1_ali} to train on alignments from delta + delta-delta training
+# Questions: "steps/align_si.sh --use-graphs true" means we need $tri1/fsts.JOB.gz to generate
+# tri1 ali in a form thats reqd for mpe training. But currently $tri1 does not 
+# generate such graphs ($tri1/fsts.JOB.gz). Can I generate tri ali w/o the depending
+# on such graphs and proceed for mpe training? This is still sth I need to figure out.
+# If we are able to train mpe on delta + delta-delta ali, only then can we compare
+# evenly/fairly between ML-ML training (trained on delta + delta-delta feats) and train mpe.
+# If we train mpe on lda + mllt (tri2b system), then we are inherently gaining more
+# advantage by using lda + mllt.
+steps/align_si.sh --nj "$train_nj" --cmd "$train_cmd" \
+ --use-graphs true data/$train data/lang exp/$tri1 exp/${tri1_ali} 
+ 
+steps/make_denlats.sh --nj "$train_nj" --cmd "$train_cmd" \
+  data/$train data/lang  exp/$tri1 exp/${tri1_denlats}
+
+steps/train_mpe.sh data/$train data/lang exp/${tri1_ali} exp/${tri1_denlats} exp/${tri1_mpe}
+
+steps/decode.sh --config conf/decode.config --iter 4 --nj "$decode_nj"  --cmd "$decode_cmd" \
+   exp/$tri2b/graph data/test exp/${tri1_mpe}/decode_it4
+   
+steps/decode.sh --config conf/decode.config --iter 3 --nj "$decode_nj"  --cmd "$decode_cmd" \
+   exp/$tri2b/graph data/test exp/${tri1_mpe}/decode_it3
+fi
+
+if [[ $stage -eq 8 ]]; then
+echo ============================================================================
+echo "                 tri2b_mpe : (LDA + MLLT) + MPE Training & Decoding     "
+echo ============================================================================
+# Align tri2 system with train data. 
+# Use exp/${tri2b_ali} to train on alignments from LDA + MLLT training
 steps/align_si.sh --nj "$train_nj" --cmd "$train_cmd" \
  --use-graphs true data/$train data/lang exp/$tri2b exp/${tri2b_ali}
  
@@ -227,7 +257,7 @@ steps/decode.sh --config conf/decode.config --iter 3 --nj "$decode_nj"  --cmd "$
    exp/$tri2b/graph data/test exp/${tri2b_mpe}/decode_it3
 fi
 
-if [[ $stage -eq 8 ]]; then
+if [[ $stage -eq 9 ]]; then
 # Karel's neural net recipe.                                                                                                                                        
 local/nnet/run_dnn.sh exp/$tri1 ${num_trn_utt}                                                                                                                                                  
 

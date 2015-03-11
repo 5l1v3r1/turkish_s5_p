@@ -3,7 +3,7 @@
 echo -e "\n================================\n" >> RESULTS
 echo "BEGIN" >> RESULTS
 date >> RESULTS
-tests="1 2 3 4 5 7"
+tests="1 2 3 4 5 8"
 # 1 = data prep
 # 2 = feat prep
 # 3 = monophone 
@@ -21,8 +21,8 @@ done
 
 
 
-tests="3 4 5 7"
-subsets="200 500 1000"
+tests="3 4 5 8"
+subsets="100 200 500 1000"
 # train with a subset of $n utts from training set
 for n in $subsets
 do
