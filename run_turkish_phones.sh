@@ -1,18 +1,17 @@
 #!/bin/bash
 
-[ -f path.sh ] && . ./path.sh;
-. parse_options.sh || exit 1;
-
 . cmd.sh
 set -e # exit on error
+if [[ -f path.sh ]]; then . ./path.sh; fi
 
-# Acoustic model parameters
-numLeavesTri1=1500 #2500
-numGaussTri1=7000 #15000
-numLeavesMLLT=1500 #2500
-numGaussMLLT=7000 #15000
-numLeavesSAT=1500 #2500
-numGaussSAT=7000 #15000
+# default settings
+# Acoustic model parameters (for full training set)
+numLeavesTri1=2500 #2500
+numGaussTri1=15000 #15000
+numLeavesMLLT=2500 #2500
+numGaussMLLT=15000 #15000
+numLeavesSAT=2500 #2500
+numGaussSAT=15000 #15000
 numGaussUBM=400
 numLeavesSGMM=7000
 numGaussSGMM=9000
@@ -21,34 +20,54 @@ feats_nj=10
 train_nj=30
 decode_nj=5
 
-# call the next line with the directory where the RM data is
-# (the argument below is just an example).  This should contain
-# subdirectories named as follows:
-#    rm1_audio1  rm1_audio2	rm2_audio
-#local/rm_data_prep.sh /mnt/matylda2/data/RM
-#local/rm_data_prep.sh /home/dpovey/data/LDC93S3A/rm_comp
+featdir=mfcc
 
 # Directory where wav files are present
-TURKROOT=$corpus_dir
+TURKROOT=${corpus_dir}/turkish/data/speech-text
 # Enter either "WRD" (to measure WER) or "PHN" (to measure PER)
 extn="PHN"
+
+# input args
 stage=$1
-# If you want to train on a subset of trn data, enter a number. Otherwise, leave it empty (which means train on full set)
+# If you want to train on a subset of trn data, enter a number. Otherwise, enter "all" or "full" (which means train on full set)
 num_trn_utt=$2
-featdir=mfcc
 
 # [[ $num_trn_utt =~ ^[0-9]+$ ]] returns true if $num_trn_utt is a number
 [[ $num_trn_utt =~ ^[0-9]+$ ]] && echo "Stage $stage: Train acoustic models on $num_trn_utt utterances" \
-	|| echo "Stage $stage: Train acoustic models on all utterances"
+	|| { num_trn_utt=""; echo "Stage $stage: Train acoustic models on all utterances"; }
 
-# Calculate num leaves and num Gauss from the number of utterances. 
+# Set up some configs based on input args
+# 1) Number of senone labels and mixtures
+# Calculate num leaves and num Gauss from the number of utterances using the rule: 
+# nMD/100 = num utts x (avg durn in secs per utt), n = no. of frames per parameter, M = total #mixtures, D = params per mix.
 # Each Turkish utt is about 4 secs long; skip rate at 100 frames/sec; 80 params per Gauss mix (mean = 39, diag cov = 39, wt = 1);
-export num_trn_utt; 
+[[ ! -z $num_trn_utt ]] && {
+export num_trn_utt;
 numGaussTri1=`perl -e '$x=int($ENV{num_trn_utt}*4*100/80); print "$x";'`;
 numLeavesTri1=`echo "$numGaussTri1/5" | bc`
-
+}
 echo -e "#Triphone States = $numLeavesTri1 \n#Triphone Mix = $numGaussTri1";
 
+train=train${num_trn_utt}
+
+mono=mono${num_trn_utt}
+mono_ali=${mono}_ali
+
+tri1=tri1${num_trn_utt}
+tri1_ali=${tri1}_ali
+
+tri2a=tri2a${num_trn_utt}
+tri2a_ali=${tri2a}_ali
+
+tri2b=tri2b${num_trn_utt}
+tri2b_ali=${tri2b}_ali
+tri2b_denlats=${tri2b}_denlats
+tri2b_mpe=${tri2b}_mpe
+
+tri3b=tri3b${num_trn_utt}
+tri3b_ali=${tri3b}_ali
+
+# Training stages start from here
 if [[ $stage -eq 1 ]]; then
 # If $num_trn_utt is empty (train full set), then run the data prep and feat generation part.
 local/turkish_data_prep.sh  $TURKROOT $extn
@@ -86,31 +105,16 @@ done
 
 #utils/combine_data.sh data/test data/test_{mar87,oct87,feb89,oct89,feb91,sep92}
 #steps/compute_cmvn_stats.sh data/test exp/make_feat/test $featdir
+utils/subset_data_dir.sh data/train 1000 data/train.1k
 fi
 
 # Amit: Everything below this is same as rm/run.sh for word models and 
 # timit/run.sh for phn models
-train=train${num_trn_utt}
-
-mono=mono${num_trn_utt}
-mono_ali=${mono}_ali
-
-tri1=tri1${num_trn_utt}
-tri1_ali=${tri1}_ali
-
-#tri1fmllr=tri1fmllr${num_trn_utt}
-#tri1fmllr_ali=${tri1fmllr}_ali
-
-tri2a=tri2a${num_trn_utt}
-tri2b=tri2b${num_trn_utt}
-tri2b_ali=${tri2b}_ali
-
-tri3b=tri3b${num_trn_utt}
-tri3b_ali=${tri3b}_ali
-
-[[ -d $featdir -a ! -d data/train${num_trn_utt} ]] && utils/subset_data_dir.sh data/train ${num_trn_utt:-1000} data/train${num_trn_utt:-.1k}
-
 if [[ $stage -eq 3 ]]; then
+
+# create subset data dir if the training set is a reduced set
+[[ -d $featdir && ! -d data/$train ]] && utils/subset_data_dir.sh data/train ${num_trn_utt} data/$train
+
 echo ============================================================================
 echo "                     MonoPhone Training & Decoding                        "
 echo ============================================================================
@@ -120,8 +124,8 @@ steps/train_mono.sh --nj "$train_nj" --cmd "$train_cmd" data/train${num_trn_utt:
 
 utils/mkgraph.sh --mono data/lang exp/$mono exp/$mono/graph
 
-#steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
-# exp/mono/graph data/dev exp/mono/decode_dev
+steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
+ exp/$mono/graph data/dev exp/$mono/decode_dev
 
 steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
   exp/$mono/graph data/test exp/$mono/decode_test
@@ -142,13 +146,10 @@ steps/train_deltas.sh --cmd "$train_cmd" \
 utils/mkgraph.sh data/lang exp/$tri1 exp/$tri1/graph
 
 steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
- exp/tri1/graph data/dev exp/tri1/decode_dev
+ exp/$tri1/graph data/dev exp/$tri1/decode_dev
 
 steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
  exp/$tri1/graph data/test exp/$tri1/decode_test
-
-steps/align_si.sh --nj "$train_nj" --cmd "$train_cmd" \
-  data/$train data/lang exp/$tri1 exp/${tri1_ali}
   
 #steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
 # exp/$tri1/graph data/dev exp/$tri1/decode_dev
@@ -174,8 +175,8 @@ steps/train_lda_mllt.sh --cmd "$train_cmd" \
 
 utils/mkgraph.sh data/lang exp/$tri2b exp/$tri2b/graph
 
-#steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
-# exp/tri2b/graph data/dev exp/tri2b/decode_dev
+steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
+ exp/$tri2b/graph data/dev exp/$tri2b/decode_dev
 
 steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
  exp/$tri2b/graph data/test exp/$tri2b/decode_test
@@ -207,6 +208,26 @@ steps/align_fmllr.sh --nj "$train_nj" --cmd "$train_cmd" \
 fi
 
 if [[ $stage -eq 7 ]]; then
+echo ============================================================================
+echo "                 tri2b_mpe : LDA + MLLT + MPE Training & Decoding          "
+echo ============================================================================
+# Align tri2 system with train data.
+steps/align_si.sh --nj "$train_nj" --cmd "$train_cmd" \
+ --use-graphs true data/$train data/lang exp/$tri2b exp/${tri2b_ali}
+ 
+steps/make_denlats.sh --nj "$train_nj" --cmd "$train_cmd" \
+  data/$train data/lang  exp/$tri2b exp/${tri2b_denlats}
+
+steps/train_mpe.sh data/$train data/lang exp/${tri2b_ali} exp/${tri2b_denlats} exp/${tri2b_mpe}
+
+steps/decode.sh --config conf/decode.config --iter 4 --nj "$decode_nj"  --cmd "$decode_cmd" \
+   exp/$tri2b/graph data/test exp/${tri2b_mpe}/decode_it4
+   
+steps/decode.sh --config conf/decode.config --iter 3 --nj "$decode_nj"  --cmd "$decode_cmd" \
+   exp/$tri2b/graph data/test exp/${tri2b_mpe}/decode_it3
+fi
+
+if [[ $stage -eq 8 ]]; then
 # Karel's neural net recipe.                                                                                                                                        
 local/nnet/run_dnn.sh exp/$tri1 ${num_trn_utt}                                                                                                                                                  
 

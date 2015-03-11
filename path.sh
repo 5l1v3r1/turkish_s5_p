@@ -8,16 +8,16 @@ corpus_dir=/media/data/workspace/corpus
 #host dependendent settings 
 if [ `hostname` = "ifp-48" ]; then
 	export KALDI_ROOT=/ws/ifp-48_1/hasegawa/amitdas/gold/kaldi/kaldi-trunk
-	corpus_dir=/ws/rz-cl-2/hasegawa/amitdas/corpus/turkish/data/speech-text	
+	corpus_dir=/ws/rz-cl-2/hasegawa/amitdas/corpus
 elif [ `hostname` = "ifp-30" ]; then
 	export KALDI_ROOT=/media/data/workspace/gold/kaldi/kaldi-trunk		
-	corpus_dir=/media/data/workspace/corpus/turkish/data/speech-text	
+	corpus_dir=/media/data/workspace/corpus
 
 	skip_cuda_check=true
 	my_use_gpu=no
 elif [ `hostname` = "pac" ]; then
 	export KALDI_ROOT=/media/data/workspace/gold/kaldi/kaldi-trunk
-	corpus_dir=/media/data/workspace/corpus/turkish/data/speech-text	
+	corpus_dir=/media/data/workspace/corpus
 else
 	echo "Unidentified hostname `hostname`"; exit 1;
 fi
