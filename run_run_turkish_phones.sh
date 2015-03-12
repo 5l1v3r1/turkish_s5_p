@@ -10,8 +10,9 @@ tests="1 2 3 4 5 8"
 # 4 = triphone (deltas and deltas+deltas) 
 # 5 = LDA + MLLT 
 # 6 = LDA+MLLT+SAT, decode
-# 7 = LDA+MLLT+MPE
-# 8 = Karel's nnet
+# 7 = delta+delta-delta + MPE
+# 8 = LDA + MLLT + MPE
+# 9 = Karel's nnet
 
 #Train with the full training set
 for i in $tests

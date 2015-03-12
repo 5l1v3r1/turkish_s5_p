@@ -259,7 +259,7 @@ fi
 
 if [[ $stage -eq 9 ]]; then
 # Karel's neural net recipe.                                                                                                                                        
-local/nnet/run_dnn.sh exp/$tri1 ${num_trn_utt}                                                                                                                                                  
+local/nnet/run_dnn.sh --precomp-dbn "../../multilingualdbn/s5/exp/dnn4_pretrain-dbn" exp/$tri1 ${num_trn_utt}                                                                                                                                                  
 
 # Karel's CNN recipe.
 # local/nnet/run_cnn.sh

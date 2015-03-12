@@ -25,8 +25,8 @@ echo "$0 $@"  # Print the command line for logging
 stage=0 # resume training with --stage=N
 max_nj_decode=10 
 transform_dir=
-
-
+#precomp_feat_transform=
+precomp_dbn=
 # End of config.
 [ -f ./path.sh ] && . ./path.sh; # source the path.
 . utils/parse_options.sh || exit 1;
@@ -38,6 +38,8 @@ if [ $# != 2 ]; then
    echo "  --nj <nj>                                        # number of parallel jobs"
    echo "  --cmd (utils/run.pl|utils/queue.pl <queue opts>) # how to run jobs."
    echo "  --transform-dir <transform-dir>                  # where to find fMLLR transforms."
+   #echo "  --precomp-feat-transform <pre-computed feature transform> # pre-computed feature transform that can be used for DNN training "
+   echo "  --precomp-dbn <pre-computed dbn dir> # pre-computed dbn dir that can be used for DNN training"
    exit 1;
 fi
 
@@ -45,7 +47,7 @@ fi
 gmmdir=$1  #exp/tri3
 num_trn_utt=$2
 data_fmllr=data-fmllr-tri1${num_trn_utt}  #data-fmllr-tri3
-echo "supplied transform dir = $transform_dir";
+echo "user i/p fMMLR transform dir = $transform_dir";
 
 
 if [ $stage -le 0 ]; then
@@ -73,18 +75,26 @@ if [ $stage -le 0 ]; then
 fi
 
 if [ $stage -le 1 ]; then
+  if [[ -z ${precomp_dbn} ]]; then 
   # Pre-train DBN, i.e. a stack of RBMs (small database, smaller DNN)
   dir=exp/dnn4_pretrain-dbn${num_trn_utt}
   (tail --pid=$$ -F $dir/log/pretrain_dbn.log 2>/dev/null)& # forward log
   $cuda_cmd $dir/log/pretrain_dbn.log \
     steps/nnet/pretrain_dbn.sh --hid-dim 1024 --rbm-iter 20 $data_fmllr/train $dir || exit 1;
+  else
+  [[ ! -d ${precomp_dbn} ]] && echo "pre-computed dbn directory ${precomp_dbn} does not exist"
+  echo "using pre-computed dbn from ${precomp_dbn}"
+  dir=exp/dnn4_pretrain-dbn${num_trn_utt}
+  mkdir -p $dir
+  cp -r ${precomp_dbn}/* $dir
+  fi
 fi
 
 if [ $stage -le 2 ]; then
   # Train the DNN optimizing per-frame cross-entropy.
   dir=exp/dnn4_pretrain-dbn_dnn${num_trn_utt}
   ali=${gmmdir}_ali
-  feature_transform=exp/dnn4_pretrain-dbn/final.feature_transform
+  feature_transform=exp/dnn4_pretrain-dbn${num_trn_utt}/final.feature_transform
   dbn=exp/dnn4_pretrain-dbn${num_trn_utt}/6.dbn
   (tail --pid=$$ -F $dir/log/train_nnet.log 2>/dev/null)& # forward log
   # Train
@@ -92,12 +102,12 @@ if [ $stage -le 2 ]; then
     steps/nnet/train.sh --feature-transform $feature_transform --dbn $dbn --hid-layers 0 --learn-rate 0.008 \
     $data_fmllr/train_tr90 $data_fmllr/train_cv10 data/lang $ali $ali $dir || exit 1;
   # Decode (reuse HCLG graph)
-  nj_decode=$(cat conf/dev_spk.list |wc -l); [[ $nj_decode -gt  $max_nj_decode ]] && nj_decode=$max_nj_decode; 
+  nj_decode=$(cat conf/dev_spk.list |wc -l); [[ $nj_decode -gt  $max_nj_decode ]] && nj_decode=$max_nj_decode;  
   steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --acwt 0.2 \
-    $gmmdir/graph $data_fmllr/test $dir/decode_test || exit 1;
-  nj_decode=$(cat conf/test_spk.list |wc -l); [[ $nj_decode -gt  $max_nj_decode ]] && nj_decode=$max_nj_decode;  
+    $gmmdir/graph $data_fmllr/dev $dir/decode_dev || exit 1;    
+  nj_decode=$(cat conf/test_spk.list |wc -l); [[ $nj_decode -gt  $max_nj_decode ]] && nj_decode=$max_nj_decode; 
   steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --acwt 0.2 \
-    $gmmdir/graph $data_fmllr/dev $dir/decode_dev || exit 1;
+    $gmmdir/graph $data_fmllr/test $dir/decode_test || exit 1;  
 fi
 
 

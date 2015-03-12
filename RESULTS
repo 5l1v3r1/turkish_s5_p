@@ -102,58 +102,76 @@ END
 ================================
 
 
-
-
 ================================
 
 BEGIN
-Wed Mar 11 03:17:30 CDT 2015
-END
+Wed Mar 11 17:36:39 CDT 2015
 
-================================
+mono
+%WER 46.77 [ 4196 / 8972, 275 ins, 1479 del, 2442 sub ] exp/mono100/decode_dev/wer_3
+%WER 45.65 [ 12219 / 26767, 643 ins, 4455 del, 7121 sub ] exp/mono100/decode_test/wer_4
 
+%WER 42.88 [ 3847 / 8972, 219 ins, 1407 del, 2221 sub ] exp/mono200/decode_dev/wer_3
+%WER 41.81 [ 11191 / 26767, 687 ins, 3793 del, 6711 sub ] exp/mono200/decode_test/wer_3
 
-
-
-================================
-
-BEGIN
-Wed Mar 11 03:18:26 CDT 2015
-END
-
-================================
+%WER 40.97 [ 3676 / 8972, 179 ins, 1562 del, 1935 sub ] exp/mono500/decode_dev/wer_4
+%WER 39.79 [ 10651 / 26767, 616 ins, 3749 del, 6286 sub ] exp/mono500/decode_test/wer_3
 
 
+%WER 40.02 [ 3591 / 8972, 212 ins, 1406 del, 1973 sub ] exp/mono1000/decode_dev/wer_3
+%WER 38.60 [ 10333 / 26767, 644 ins, 3692 del, 5997 sub ] exp/mono1000/decode_test/wer_3
+
+%WER 40.02 [ 3591 / 8972, 212 ins, 1406 del, 1973 sub ] exp/mono/decode_dev/wer_3
+%WER 38.60 [ 10333 / 26767, 644 ins, 3692 del, 5997 sub ] exp/mono/decode_test/wer_3
+
+tri1
+%WER 46.57 [ 4178 / 8972, 252 ins, 1503 del, 2423 sub ] exp/tri1100/decode_dev/wer_4
+%WER 46.19 [ 12364 / 26767, 930 ins, 4014 del, 7420 sub ] exp/tri1100/decode_test/wer_4
+
+%WER 42.09 [ 3776 / 8972, 267 ins, 1232 del, 2277 sub ] exp/tri1200/decode_dev/wer_4
+%WER 40.52 [ 10847 / 26767, 852 ins, 3102 del, 6893 sub ] exp/tri1200/decode_test/wer_4
+
+%WER 36.06 [ 3235 / 8972, 232 ins, 1043 del, 1960 sub ] exp/tri1500/decode_dev/wer_5
+%WER 35.60 [ 9528 / 26767, 806 ins, 2655 del, 6067 sub ] exp/tri1500/decode_test/wer_5
+
+%WER 32.45 [ 2911 / 8972, 230 ins, 928 del, 1753 sub ] exp/tri11000/decode_dev/wer_6
+%WER 31.46 [ 8422 / 26767, 721 ins, 2281 del, 5420 sub ] exp/tri11000/decode_test/wer_6
+
+%WER 27.35 [ 2454 / 8972, 202 ins, 779 del, 1473 sub ] exp/tri1/decode_dev/wer_7
+%WER 26.09 [ 6983 / 26767, 623 ins, 1901 del, 4459 sub ] exp/tri1/decode_test/wer_7
+
+tri2b
+%WER 45.12 [ 4048 / 8972, 245 ins, 1507 del, 2296 sub ] exp/tri2b100/decode_dev/wer_5
+%WER 44.58 [ 11933 / 26767, 813 ins, 4025 del, 7095 sub ] exp/tri2b100/decode_test/wer_5
+
+%WER 38.97 [ 3496 / 8972, 266 ins, 1155 del, 2075 sub ] exp/tri2b200/decode_dev/wer_5
+%WER 38.58 [ 10328 / 26767, 865 ins, 3083 del, 6380 sub ] exp/tri2b200/decode_test/wer_5
+
+%WER 33.60 [ 3015 / 8972, 219 ins, 1046 del, 1750 sub ] exp/tri2b500/decode_dev/wer_7
+%WER 33.42 [ 8945 / 26767, 683 ins, 2716 del, 5546 sub ] exp/tri2b500/decode_test/wer_7
+
+%WER 29.60 [ 2656 / 8972, 215 ins, 880 del, 1561 sub ] exp/tri2b1000/decode_dev/wer_7
+%WER 29.14 [ 7800 / 26767, 804 ins, 2048 del, 4948 sub ] exp/tri2b1000/decode_test/wer_6
+
+%WER 24.75 [ 2221 / 8972, 242 ins, 681 del, 1298 sub ] exp/tri2b/decode_dev/wer_6
+%WER 24.25 [ 6490 / 26767, 692 ins, 1675 del, 4123 sub ] exp/tri2b/decode_test/wer_6
 
 
-================================
+tri2b mpe
+%WER 45.12 [ 12078 / 26767, 853 ins, 4048 del, 7177 sub ] exp/tri2b100_mpe/decode_it3/wer_6
+%WER 45.25 [ 12111 / 26767, 889 ins, 4009 del, 7213 sub ] exp/tri2b100_mpe/decode_it4/wer_6
 
-BEGIN
-Wed Mar 11 03:19:36 CDT 2015
-%WER 40.30 [ 3616 / 8972, 264 ins, 1249 del, 2103 sub ] exp/mono/decode_dev/wer_2
-%WER 38.56 [ 10322 / 26767, 483 ins, 4039 del, 5800 sub ] exp/mono/decode_test/wer_4
-%WER 40.30 [ 3616 / 8972, 264 ins, 1249 del, 2103 sub ] exp/mono1000/decode_dev/wer_2
-%WER 38.56 [ 10322 / 26767, 483 ins, 4039 del, 5800 sub ] exp/mono1000/decode_test/wer_4
-%WER 42.91 [ 3850 / 8972, 232 ins, 1394 del, 2224 sub ] exp/mono200/decode_dev/wer_3
-%WER 41.67 [ 11155 / 26767, 670 ins, 3837 del, 6648 sub ] exp/mono200/decode_test/wer_3
-%WER 41.45 [ 3719 / 8972, 212 ins, 1400 del, 2107 sub ] exp/mono500/decode_dev/wer_3
-%WER 39.81 [ 10655 / 26767, 610 ins, 3771 del, 6274 sub ] exp/mono500/decode_test/wer_3
-%WER 26.93 [ 2416 / 8972, 288 ins, 621 del, 1507 sub ] exp/tri1/decode_dev/wer_5
-%WER 26.11 [ 6988 / 26767, 649 ins, 1890 del, 4449 sub ] exp/tri1/decode_test/wer_7
-%WER 32.12 [ 2882 / 8972, 175 ins, 1026 del, 1681 sub ] exp/tri11000/decode_dev/wer_7
-%WER 31.60 [ 8458 / 26767, 725 ins, 2290 del, 5443 sub ] exp/tri11000/decode_test/wer_6
-%WER 42.35 [ 3800 / 8972, 280 ins, 1188 del, 2332 sub ] exp/tri1200/decode_dev/wer_4
-%WER 40.84 [ 10932 / 26767, 969 ins, 3047 del, 6916 sub ] exp/tri1200/decode_test/wer_4
-%WER 36.48 [ 3273 / 8972, 256 ins, 1036 del, 1981 sub ] exp/tri1500/decode_dev/wer_5
-%WER 35.61 [ 9532 / 26767, 851 ins, 2542 del, 6139 sub ] exp/tri1500/decode_test/wer_5
-%WER 24.99 [ 2242 / 8972, 238 ins, 656 del, 1348 sub ] exp/tri2b/decode_dev/wer_6
-%WER 24.14 [ 6462 / 26767, 814 ins, 1510 del, 4138 sub ] exp/tri2b/decode_test/wer_5
-%WER 29.42 [ 2640 / 8972, 217 ins, 869 del, 1554 sub ] exp/tri2b1000/decode_dev/wer_7
-%WER 29.08 [ 7784 / 26767, 650 ins, 2233 del, 4901 sub ] exp/tri2b1000/decode_test/wer_7
-%WER 39.96 [ 3585 / 8972, 275 ins, 1119 del, 2191 sub ] exp/tri2b200/decode_dev/wer_5
-%WER 38.65 [ 10345 / 26767, 709 ins, 3357 del, 6279 sub ] exp/tri2b200/decode_test/wer_6
-%WER 33.72 [ 3025 / 8972, 236 ins, 1029 del, 1760 sub ] exp/tri2b500/decode_dev/wer_7
-%WER 33.31 [ 8917 / 26767, 673 ins, 2662 del, 5582 sub ] exp/tri2b500/decode_test/wer_7
+%WER 39.87 [ 10671 / 26767, 681 ins, 3578 del, 6412 sub ] exp/tri2b200_mpe/decode_it3/wer_7
+%WER 39.88 [ 10675 / 26767, 884 ins, 3198 del, 6593 sub ] exp/tri2b200_mpe/decode_it4/wer_6
+
+%WER 34.24 [ 9165 / 26767, 691 ins, 2800 del, 5674 sub ] exp/tri2b500_mpe/decode_it3/wer_8
+%WER 34.25 [ 9168 / 26767, 700 ins, 2779 del, 5689 sub ] exp/tri2b500_mpe/decode_it4/wer_8
+
+%WER 30.17 [ 8076 / 26767, 795 ins, 2145 del, 5136 sub ] exp/tri2b1000_mpe/decode_it3/wer_7
+%WER 30.24 [ 8094 / 26767, 801 ins, 2127 del, 5166 sub ] exp/tri2b1000_mpe/decode_it4/wer_7
+
+%WER 23.17 [ 6201 / 26767, 640 ins, 1613 del, 3948 sub ] exp/tri2b_mpe/decode_it3/wer_8
+%WER 23.14 [ 6195 / 26767, 678 ins, 1539 del, 3978 sub ] exp/tri2b_mpe/decode_it4/wer_8
 END
 
 ================================
