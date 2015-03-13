@@ -1,10 +1,4 @@
 #! /bin/bash
-
-echo -e "\n================================\n" >> RESULTS
-echo "BEGIN" >> RESULTS
-date >> RESULTS
-#tests="1 2 3 4 5 8 9"
-tests="9"
 # 1 = data prep
 # 2 = feat prep
 # 3 = monophone 
@@ -15,16 +9,23 @@ tests="9"
 # 8 = LDA + MLLT + MPE
 # 9 = Karel's nnet
 
+echo -e "\n================================\n" >> RESULTS
+echo "BEGIN" >> RESULTS
+date >> RESULTS
+#: << 'COMMENT'
+tests="1 2 3 4 5 6 8"
+#tests="9"
+
 #Train with the full training set
 for i in $tests
 do
 	bash run_turkish_phones.sh $i "all"
 done
+#COMMENT
 
 
-
-#tests="3 4 5 8"
-tests="9"
+tests="3 4 5 6 8"
+#tests="9"
 subsets="100 200 500 1000"
 # train with a subset of $n utts from training set
 for n in $subsets

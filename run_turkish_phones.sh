@@ -45,6 +45,12 @@ num_trn_utt=$2
 export num_trn_utt;
 numGaussTri1=`perl -e '$x=int($ENV{num_trn_utt}*4*100/80); print "$x";'`;
 numLeavesTri1=`echo "$numGaussTri1/5" | bc`
+
+numLeavesMLLT=$numLeavesTri1 
+numGaussMLLT=$numGaussTri1 
+
+numLeavesSAT=$numLeavesTri1 
+numGaussSAT=$numGaussTri1
 }
 echo -e "#Triphone States = $numLeavesTri1 \n#Triphone Mix = $numGaussTri1";
 
@@ -197,8 +203,8 @@ steps/train_sat.sh --cmd "$train_cmd" \
 
 utils/mkgraph.sh data/lang exp/$tri3b exp/$tri3b/graph
 
-#steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
-# exp/tri3b/graph data/dev exp/tri3b/decode_dev
+steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
+ exp/$tri3b/graph data/dev exp/$tri3b/decode_dev
 
 steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
  exp/$tri3b/graph data/test exp/$tri3b/decode_test
