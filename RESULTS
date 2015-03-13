@@ -127,15 +127,24 @@ mono
 tri1
 %WER 46.57 [ 4178 / 8972, 252 ins, 1503 del, 2423 sub ] exp/tri1100/decode_dev/wer_4
 %WER 46.19 [ 12364 / 26767, 930 ins, 4014 del, 7420 sub ] exp/tri1100/decode_test/wer_4
+%WER 46.99 [ 4216 / 8972, 128 ins, 2158 del, 1930 sub ] exp/dnn4_pretrain-dbn_dnn100/decode_dev/wer_4
+%WER 46.35 [ 12407 / 26767, 318 ins, 5904 del, 6185 sub ] exp/dnn4_pretrain-dbn_dnn100/decode_test/wer_4
 
 %WER 42.09 [ 3776 / 8972, 267 ins, 1232 del, 2277 sub ] exp/tri1200/decode_dev/wer_4
 %WER 40.52 [ 10847 / 26767, 852 ins, 3102 del, 6893 sub ] exp/tri1200/decode_test/wer_4
+%WER 39.56 [ 3549 / 8972, 133 ins, 1535 del, 1881 sub ] exp/dnn4_pretrain-dbn_dnn200/decode_dev/wer_4
+%WER 38.50 [ 10306 / 26767, 397 ins, 4091 del, 5818 sub ] exp/dnn4_pretrain-dbn_dnn200/decode_test/wer_4
 
 %WER 36.06 [ 3235 / 8972, 232 ins, 1043 del, 1960 sub ] exp/tri1500/decode_dev/wer_5
 %WER 35.60 [ 9528 / 26767, 806 ins, 2655 del, 6067 sub ] exp/tri1500/decode_test/wer_5
+%WER 32.92 [ 2954 / 8972, 128 ins, 1175 del, 1651 sub ] exp/dnn4_pretrain-dbn_dnn500/decode_dev/wer_4
+%WER 31.82 [ 8518 / 26767, 390 ins, 3066 del, 5062 sub ] exp/dnn4_pretrain-dbn_dnn500/decode_test/wer_4
 
 %WER 32.45 [ 2911 / 8972, 230 ins, 928 del, 1753 sub ] exp/tri11000/decode_dev/wer_6
 %WER 31.46 [ 8422 / 26767, 721 ins, 2281 del, 5420 sub ] exp/tri11000/decode_test/wer_6
+%WER 27.72 [ 2487 / 8972, 135 ins, 930 del, 1422 sub ] exp/dnn4_pretrain-dbn_dnn1000/decode_dev/wer_4
+%WER 26.86 [ 7190 / 26767, 456 ins, 2300 del, 4434 sub ] exp/dnn4_pretrain-dbn_dnn1000/decode_test/wer_4
+
 
 %WER 27.35 [ 2454 / 8972, 202 ins, 779 del, 1473 sub ] exp/tri1/decode_dev/wer_7
 %WER 26.09 [ 6983 / 26767, 623 ins, 1901 del, 4459 sub ] exp/tri1/decode_test/wer_7
@@ -175,6 +184,3 @@ tri2b mpe
 END
 
 ================================
-
-
-

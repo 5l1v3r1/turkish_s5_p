@@ -258,8 +258,9 @@ steps/decode.sh --config conf/decode.config --iter 3 --nj "$decode_nj"  --cmd "$
 fi
 
 if [[ $stage -eq 9 ]]; then
-# Karel's neural net recipe.                                                                                                                                        
-local/nnet/run_dnn.sh --precomp-dbn "../../multilingualdbn/s5/exp/dnn4_pretrain-dbn" exp/$tri1 ${num_trn_utt}                                                                                                                                                  
+# Karel's neural net recipe.     
+[[ ! -z  ${num_trn_utt} ]] && num_trn_opt=$(echo "--num-trn-utt ${num_trn_utt}") || num_trn_opt="" 
+local/nnet/run_dnn.sh --precomp-dbn "../../multilingualdbn/s5/exp/dnn4_pretrain-dbn" $num_trn_opt exp/$tri1                                                                                                                                                   
 
 # Karel's CNN recipe.
 # local/nnet/run_cnn.sh

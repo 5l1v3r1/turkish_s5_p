@@ -25,6 +25,7 @@ echo "$0 $@"  # Print the command line for logging
 stage=0 # resume training with --stage=N
 max_nj_decode=10 
 transform_dir=
+num_trn_utt=
 #precomp_feat_transform=
 precomp_dbn=
 # End of config.
@@ -32,12 +33,13 @@ precomp_dbn=
 . utils/parse_options.sh || exit 1;
 #
 
-if [ $# != 2 ]; then   
+if [ $# != 1 ]; then   
    echo "main options (for others, see top of script file)"
    echo "  --config <config-file>                           # config containing options"
    echo "  --nj <nj>                                        # number of parallel jobs"
    echo "  --cmd (utils/run.pl|utils/queue.pl <queue opts>) # how to run jobs."
    echo "  --transform-dir <transform-dir>                  # where to find fMLLR transforms."
+   echo "  --num-trn-utt <n>                                # number of utts in train set."
    #echo "  --precomp-feat-transform <pre-computed feature transform> # pre-computed feature transform that can be used for DNN training "
    echo "  --precomp-dbn <pre-computed dbn dir> # pre-computed dbn dir that can be used for DNN training"
    exit 1;
@@ -45,10 +47,8 @@ fi
 
 # Config:
 gmmdir=$1  #exp/tri3
-num_trn_utt=$2
 data_fmllr=data-fmllr-tri1${num_trn_utt}  #data-fmllr-tri3
 echo "user i/p fMMLR transform dir = $transform_dir";
-
 
 if [ $stage -le 0 ]; then
   # Store fMLLR features, so we can train on them easily,
