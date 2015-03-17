@@ -40,7 +40,7 @@ num_trn_utt=$2
 # 1) Number of senone labels and mixtures
 # Calculate num leaves and num Gauss from the number of utterances using the rule: 
 # nMD/100 = num utts x (avg durn in secs per utt), n = no. of frames per parameter, M = total #mixtures, D = params per mix.
-# Each Turkish utt is about 4 secs long; skip rate at 100 frames/sec; 80 params per Gauss mix (mean = 39, diag cov = 39, wt = 1);
+# Each Turkish utt is about 4 secs long; skip rate at 100 frames/sec; D = 80 params per Gauss mix (mean = 39, diag cov = 39, wt = 1);
 [[ ! -z $num_trn_utt ]] && {
 export num_trn_utt;
 numGaussTri1=`perl -e '$x=int($ENV{num_trn_utt}*4*100/80); print "$x";'`;
@@ -56,21 +56,23 @@ echo -e "#Triphone States = $numLeavesTri1 \n#Triphone Mix = $numGaussTri1";
 
 train=train${num_trn_utt}
 
-mono=mono${num_trn_utt}
+post_fix=${num_trn_utt}
+
+mono=mono${post_fix}
 mono_ali=${mono}_ali
 
-tri1=tri1${num_trn_utt}
+tri1=tri1${post_fix}
 tri1_ali=${tri1}_ali
 
-tri2a=tri2a${num_trn_utt}
+tri2a=tri2a${post_fix}
 tri2a_ali=${tri2a}_ali
 
-tri2b=tri2b${num_trn_utt}
+tri2b=tri2b${post_fix}
 tri2b_ali=${tri2b}_ali
 tri2b_denlats=${tri2b}_denlats
 tri2b_mpe=${tri2b}_mpe
 
-tri3b=tri3b${num_trn_utt}
+tri3b=tri3b${post_fix}
 tri3b_ali=${tri3b}_ali
 
 # Training stages start from here
@@ -156,15 +158,6 @@ steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
 
 steps/decode.sh --nj "$decode_nj" --cmd "$decode_cmd" \
  exp/$tri1/graph data/test exp/$tri1/decode_test
-  
-#steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
-# exp/$tri1/graph data/dev exp/$tri1/decode_dev
- 
-#steps/decode_fmllr.sh --nj "$decode_nj" --cmd "$decode_cmd" \
-# exp/$tri1/graph data/test exp/$tri1/decode_test
- 
-#steps/align_fmllr.sh --nj "$train_nj" --cmd "$train_cmd" \
-# data/$train data/lang exp/$tri1 exp/${tri1_ali}
 fi
 
 if [[ $stage -eq 5 ]]; then
@@ -266,7 +259,9 @@ fi
 if [[ $stage -eq 9 ]]; then
 # Karel's neural net recipe.     
 [[ ! -z  ${num_trn_utt} ]] && num_trn_opt=$(echo "--num-trn-utt ${num_trn_utt}") || num_trn_opt="" 
-local/nnet/run_dnn.sh --precomp-dbn "../../multilingualdbn/s5/exp/dnn4_pretrain-dbn" $num_trn_opt exp/$tri1                                                                                                                                                   
+
+local/nnet/run_dnn.sh --precomp-dbn "../../multilingualdbn/s5/exp/dnn4_pretrain-dbn" \
+	--use-delta "true" --train-iters 20 --post-fix ${post_fix} ${num_trn_opt} exp/$tri3b
 
 # Karel's CNN recipe.
 # local/nnet/run_cnn.sh
