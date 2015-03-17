@@ -262,6 +262,9 @@ if [[ $stage -eq 9 ]]; then
 
 local/nnet/run_dnn.sh --precomp-dbn "../../multilingualdbn/s5/exp/dnn4_pretrain-dbn" \
 	--use-delta "true" --train-iters 20 ${num_trn_opt} exp/$tri1
+	
+local/nnet/run_dnn.sh --precomp-dbn "../../multilingualdbn/s5/exp/dnn4_pretrain-dbn" \
+	--use-delta "true" --train-iters 20 ${num_trn_opt} exp/$tri2b
 
 # Karel's CNN recipe.
 # local/nnet/run_cnn.sh
