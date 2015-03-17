@@ -114,11 +114,11 @@ if [ $stage -le 2 ]; then
 
   # Decode (reuse HCLG graph)
   nj_decode=$(cat conf/dev_spk.list |wc -l); [[ $nj_decode -gt  $max_nj_decode ]] && nj_decode=$max_nj_decode;  
-  steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --use-gpu $my_use_gpu --acwt 0.2 \
+  steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --use-gpu no --acwt 0.2 \
     $gmmdir/graph $data_fmllr/dev $dir/decode_dev || exit 1;
   
   nj_decode=$(cat conf/test_spk.list |wc -l); [[ $nj_decode -gt  $max_nj_decode ]] && nj_decode=$max_nj_decode; 
-  steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --use-gpu $my_use_gpu --acwt 0.2 \
+  steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --use-gpu no --acwt 0.2 \
     $gmmdir/graph $data_fmllr/test $dir/decode_test || exit 1;  
 fi
 
