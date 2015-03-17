@@ -261,7 +261,7 @@ if [[ $stage -eq 9 ]]; then
 [[ ! -z  ${num_trn_utt} ]] && num_trn_opt=$(echo "--num-trn-utt ${num_trn_utt}") || num_trn_opt="" 
 
 local/nnet/run_dnn.sh --precomp-dbn "../../multilingualdbn/s5/exp/dnn4_pretrain-dbn" \
-	--use-delta "true" --train-iters 20 --post-fix ${post_fix} ${num_trn_opt} exp/$tri3b
+	--use-delta "true" --train-iters 20 ${num_trn_opt} exp/$tri1
 
 # Karel's CNN recipe.
 # local/nnet/run_cnn.sh

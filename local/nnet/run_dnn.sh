@@ -53,6 +53,9 @@ fi
 # Config:
 gmmdir=$1  #exp/tri3
 data_fmllr=data-fmllr-$(basename $gmmdir)   #data-fmllr-tri3
+
+[[ ! -z $post_fix ]] && post_fix="_$post_fix"
+post_fix=$(basename $gmmdir)$post_fix
 echo "user i/p fMMLR transform dir = $transform_dir";
 
 if [ $stage -le 0 ]; then
