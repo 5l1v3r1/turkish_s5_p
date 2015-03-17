@@ -28,6 +28,9 @@ transform_dir=
 num_trn_utt=
 #precomp_feat_transform=
 precomp_dbn=
+post_fix=""
+train_iters=20
+use_delta=false
 # End of config.
 [ -f ./path.sh ] && . ./path.sh; # source the path.
 . utils/parse_options.sh || exit 1;
@@ -40,14 +43,16 @@ if [ $# != 1 ]; then
    echo "  --cmd (utils/run.pl|utils/queue.pl <queue opts>) # how to run jobs."
    echo "  --transform-dir <transform-dir>                  # where to find fMLLR transforms."
    echo "  --num-trn-utt <n>                                # number of utts in train set."
-   #echo "  --precomp-feat-transform <pre-computed feature transform> # pre-computed feature transform that can be used for DNN training "
-   echo "  --precomp-dbn <pre-computed dbn dir> # pre-computed dbn dir that can be used for DNN training"
+   echo "  --post-fix   <string>                            # add a post-fix string to exp/dnn dir" 
+   echo "  --precomp-dbn <pre-computed dbn dir>             # pre-computed dbn dir that can be used for DNN training"
+   echo "  --train-iters <N>                                # number of nnet training iterations"
+   echo "  --use-delta     <bool> 							# if set to true, will use mfcc + delta feats only, forcibly ignore transforms"
    exit 1;
 fi
 
 # Config:
 gmmdir=$1  #exp/tri3
-data_fmllr=data-fmllr-tri1${num_trn_utt}  #data-fmllr-tri3
+data_fmllr=data-fmllr-$(basename $gmmdir)   #data-fmllr-tri3
 echo "user i/p fMMLR transform dir = $transform_dir";
 
 if [ $stage -le 0 ]; then
@@ -55,19 +60,19 @@ if [ $stage -le 0 ]; then
   # test  
   dir=$data_fmllr/test
   [[ ! -z $transform_dir ]] && transform_dir_opt="--transform-dir $transform_dir/decode_test" || transform_dir_opt=""
-  steps/nnet/make_fmllr_feats.sh --nj 10 --cmd "$train_cmd" \
+  steps/nnet/make_fmllr_feats.sh --nj 10 --cmd "$train_cmd" --use-delta $use_delta \
      $transform_dir_opt \
      $dir data/test $gmmdir $dir/log $dir/data || exit 1
   # dev
   dir=$data_fmllr/dev
   [[ ! -z $transform_dir ]] && transform_dir_opt="--transform-dir $transform_dir/decode_dev" || transform_dir_opt=""
-  steps/nnet/make_fmllr_feats.sh --nj 5 --cmd "$train_cmd" \
+  steps/nnet/make_fmllr_feats.sh --nj 5 --cmd "$train_cmd" --use-delta $use_delta \
      $transform_dir_opt \
      $dir data/dev $gmmdir $dir/log $dir/data || exit 1
   # train
   dir=$data_fmllr/train
   [[ ! -z $transform_dir ]] && transform_dir_opt="--transform-dir ${transform_dir}_ali" || transform_dir_opt=""
-  steps/nnet/make_fmllr_feats.sh --nj 10 --cmd "$train_cmd" \
+  steps/nnet/make_fmllr_feats.sh --nj 10 --cmd "$train_cmd" --use-delta $use_delta \
      $transform_dir_opt \
      $dir data/train${num_trn_utt} $gmmdir $dir/log $dir/data || exit 1
   # split the data : 90% train 10% cross-validation (held-out)
@@ -77,36 +82,43 @@ fi
 if [ $stage -le 1 ]; then
   if [[ -z ${precomp_dbn} ]]; then 
   # Pre-train DBN, i.e. a stack of RBMs (small database, smaller DNN)
-  dir=exp/dnn4_pretrain-dbn${num_trn_utt}
+  dir=exp/dnn4_pretrain-dbn${post_fix}
   (tail --pid=$$ -F $dir/log/pretrain_dbn.log 2>/dev/null)& # forward log
   $cuda_cmd $dir/log/pretrain_dbn.log \
     steps/nnet/pretrain_dbn.sh --hid-dim 1024 --rbm-iter 20 $data_fmllr/train $dir || exit 1;
+  # Use the feature transform from the dbn directory
+  feature_transform=$dir/final.feature_transform
+  feature_transform_opt=$(echo "--feature-transform $feature_transform")
   else
   [[ ! -d ${precomp_dbn} ]] && echo "pre-computed dbn directory ${precomp_dbn} does not exist"
   echo "using pre-computed dbn from ${precomp_dbn}"
-  dir=exp/dnn4_pretrain-dbn${num_trn_utt}
+  dir=exp/dnn4_pretrain-dbn${post_fix}
   mkdir -p $dir
   cp -r ${precomp_dbn}/* $dir
+  feature_transform_opt=
   fi
 fi
 
 if [ $stage -le 2 ]; then
   # Train the DNN optimizing per-frame cross-entropy.
-  dir=exp/dnn4_pretrain-dbn_dnn${num_trn_utt}
+  dir=exp/dnn4_pretrain-dbn_dnn${post_fix}
   ali=${gmmdir}_ali
-  feature_transform=exp/dnn4_pretrain-dbn${num_trn_utt}/final.feature_transform
-  dbn=exp/dnn4_pretrain-dbn${num_trn_utt}/6.dbn
+  dbn=exp/dnn4_pretrain-dbn${post_fix}/6.dbn
   (tail --pid=$$ -F $dir/log/train_nnet.log 2>/dev/null)& # forward log
   # Train
   $cuda_cmd $dir/log/train_nnet.log \
-    steps/nnet/train.sh --feature-transform $feature_transform --dbn $dbn --hid-layers 0 --learn-rate 0.008 \
+    steps/nnet/train.sh --splice 5 --splice-step 1  $feature_transform_opt --feat-type "plain" \
+	--nnet-binary "false" --train-iters $train_iters \
+    --dbn $dbn --hid-layers 0 --hid-dim 1024 --learn-rate 0.008 \
     $data_fmllr/train_tr90 $data_fmllr/train_cv10 data/lang $ali $ali $dir || exit 1;
+
   # Decode (reuse HCLG graph)
   nj_decode=$(cat conf/dev_spk.list |wc -l); [[ $nj_decode -gt  $max_nj_decode ]] && nj_decode=$max_nj_decode;  
-  steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --acwt 0.2 \
-    $gmmdir/graph $data_fmllr/dev $dir/decode_dev || exit 1;    
+  steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --use-gpu $my_use_gpu --acwt 0.2 \
+    $gmmdir/graph $data_fmllr/dev $dir/decode_dev || exit 1;
+  
   nj_decode=$(cat conf/test_spk.list |wc -l); [[ $nj_decode -gt  $max_nj_decode ]] && nj_decode=$max_nj_decode; 
-  steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --acwt 0.2 \
+  steps/nnet/decode.sh --nj $nj_decode --cmd "$decode_cmd" --use-gpu $my_use_gpu --acwt 0.2 \
     $gmmdir/graph $data_fmllr/test $dir/decode_test || exit 1;  
 fi
 
