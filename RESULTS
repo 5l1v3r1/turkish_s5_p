@@ -11,7 +11,7 @@ dev spks 5, test spks 14
 BEGIN
 Fri Mar 13 14:16:02 CDT 2015
 
-mono
+--mono--
 %WER 46.77 [ 4196 / 8972, 275 ins, 1479 del, 2442 sub ] exp/mono100/decode_dev/wer_3
 %WER 45.65 [ 12219 / 26767, 643 ins, 4455 del, 7121 sub ] exp/mono100/decode_test/wer_4
 
@@ -27,49 +27,60 @@ mono
 %WER 40.02 [ 3591 / 8972, 212 ins, 1406 del, 1973 sub ] exp/mono/decode_dev/wer_3
 %WER 38.60 [ 10333 / 26767, 644 ins, 3692 del, 5997 sub ] exp/mono/decode_test/wer_3
 
-tri1
+--tri1--
 %WER 46.57 [ 4178 / 8972, 252 ins, 1503 del, 2423 sub ] exp/tri1100/decode_dev/wer_4
 %WER 46.19 [ 12364 / 26767, 930 ins, 4014 del, 7420 sub ] exp/tri1100/decode_test/wer_4
-%WER 46.99 [ 4216 / 8972, 128 ins, 2158 del, 1930 sub ] exp/dnn4_pretrain-dbn_dnn100/decode_dev/wer_4
-%WER 46.35 [ 12407 / 26767, 318 ins, 5904 del, 6185 sub ] exp/dnn4_pretrain-dbn_dnn100/decode_test/wer_4
+%WER 46.82 [ 4201 / 8972, 126 ins, 2159 del, 1916 sub ] exp/dnn4_pretrain-dbn_dnntri1100/decode_dev/wer_4
+%WER 46.25 [ 12381 / 26767, 325 ins, 5881 del, 6175 sub ] exp/dnn4_pretrain-dbn_dnntri1100/decode_test/wer_4
 
 %WER 42.09 [ 3776 / 8972, 267 ins, 1232 del, 2277 sub ] exp/tri1200/decode_dev/wer_4
 %WER 40.52 [ 10847 / 26767, 852 ins, 3102 del, 6893 sub ] exp/tri1200/decode_test/wer_4
-%WER 39.56 [ 3549 / 8972, 133 ins, 1535 del, 1881 sub ] exp/dnn4_pretrain-dbn_dnn200/decode_dev/wer_4
-%WER 38.50 [ 10306 / 26767, 397 ins, 4091 del, 5818 sub ] exp/dnn4_pretrain-dbn_dnn200/decode_test/wer_4
+%WER 39.59 [ 3552 / 8972, 132 ins, 1542 del, 1878 sub ] exp/dnn4_pretrain-dbn_dnntri1200/decode_dev/wer_4
+%WER 38.45 [ 10291 / 26767, 398 ins, 4080 del, 5813 sub ] exp/dnn4_pretrain-dbn_dnntri1200/decode_test/wer_4
 
 %WER 36.06 [ 3235 / 8972, 232 ins, 1043 del, 1960 sub ] exp/tri1500/decode_dev/wer_5
 %WER 35.60 [ 9528 / 26767, 806 ins, 2655 del, 6067 sub ] exp/tri1500/decode_test/wer_5
-%WER 32.92 [ 2954 / 8972, 128 ins, 1175 del, 1651 sub ] exp/dnn4_pretrain-dbn_dnn500/decode_dev/wer_4
-%WER 31.82 [ 8518 / 26767, 390 ins, 3066 del, 5062 sub ] exp/dnn4_pretrain-dbn_dnn500/decode_test/wer_4
+%WER 33.08 [ 2968 / 8972, 130 ins, 1174 del, 1664 sub ] exp/dnn4_pretrain-dbn_dnntri1500/decode_dev/wer_4
+%WER 31.82 [ 8516 / 26767, 417 ins, 3085 del, 5014 sub ] exp/dnn4_pretrain-dbn_dnntri1500/decode_test/wer_4
 
 %WER 32.45 [ 2911 / 8972, 230 ins, 928 del, 1753 sub ] exp/tri11000/decode_dev/wer_6
 %WER 31.46 [ 8422 / 26767, 721 ins, 2281 del, 5420 sub ] exp/tri11000/decode_test/wer_6
-%WER 27.72 [ 2487 / 8972, 135 ins, 930 del, 1422 sub ] exp/dnn4_pretrain-dbn_dnn1000/decode_dev/wer_4
-%WER 26.86 [ 7190 / 26767, 456 ins, 2300 del, 4434 sub ] exp/dnn4_pretrain-dbn_dnn1000/decode_test/wer_4
+%WER 27.79 [ 2493 / 8972, 136 ins, 924 del, 1433 sub ] exp/dnn4_pretrain-dbn_dnntri11000/decode_dev/wer_4
+%WER 26.87 [ 7193 / 26767, 445 ins, 2299 del, 4449 sub ] exp/dnn4_pretrain-dbn_dnntri11000/decode_test/wer_4
 
 %WER 27.35 [ 2454 / 8972, 202 ins, 779 del, 1473 sub ] exp/tri1/decode_dev/wer_7
 %WER 26.09 [ 6983 / 26767, 623 ins, 1901 del, 4459 sub ] exp/tri1/decode_test/wer_7
-%WER 20.54 [ 1843 / 8972, 159 ins, 626 del, 1058 sub ] exp/dnn4_pretrain-dbn_dnn/decode_dev/wer_4
-%WER 19.34 [ 5178 / 26767, 425 ins, 1561 del, 3192 sub ] exp/dnn4_pretrain-dbn_dnn/decode_test/wer_4
+%WER 20.43 [ 1833 / 8972, 156 ins, 626 del, 1051 sub ] exp/dnn4_pretrain-dbn_dnntri1/decode_dev/wer_4
+%WER 19.40 [ 5193 / 26767, 444 ins, 1556 del, 3193 sub ] exp/dnn4_pretrain-dbn_dnntri1/decode_test/wer_4
 
-tri2b
+
+--tri2b--
 %WER 45.07 [ 4044 / 8972, 245 ins, 1557 del, 2242 sub ] exp/tri2b100/decode_dev/wer_3
 %WER 44.75 [ 11979 / 26767, 1042 ins, 3750 del, 7187 sub ] exp/tri2b100/decode_test/wer_2
+%WER 46.50 [ 4172 / 8972, 105 ins, 2130 del, 1937 sub ] exp/dnn4_pretrain-dbn_dnntri2b100/decode_dev/wer_4
+%WER 45.98 [ 12307 / 26767, 313 ins, 5860 del, 6134 sub ] exp/dnn4_pretrain-dbn_dnntri2b100/decode_test/wer_4
 
 %WER 41.46 [ 3720 / 8972, 213 ins, 1469 del, 2038 sub ] exp/tri2b200/decode_dev/wer_5
 %WER 39.50 [ 10573 / 26767, 910 ins, 3160 del, 6503 sub ] exp/tri2b200/decode_test/wer_3
+%WER 39.31 [ 3527 / 8972, 126 ins, 1585 del, 1816 sub ] exp/dnn4_pretrain-dbn_dnntri2b200/decode_dev/wer_4
+%WER 38.75 [ 10373 / 26767, 370 ins, 4263 del, 5740 sub ] exp/dnn4_pretrain-dbn_dnntri2b200/decode_test/wer_4
 
 %WER 34.33 [ 3080 / 8972, 220 ins, 1070 del, 1790 sub ] exp/tri2b500/decode_dev/wer_5
 %WER 33.65 [ 9006 / 26767, 688 ins, 2680 del, 5638 sub ] exp/tri2b500/decode_test/wer_5
+%WER 32.67 [ 2931 / 8972, 138 ins, 1134 del, 1659 sub ] exp/dnn4_pretrain-dbn_dnntri2b500/decode_dev/wer_4
+%WER 31.73 [ 8492 / 26767, 450 ins, 2947 del, 5095 sub ] exp/dnn4_pretrain-dbn_dnntri2b500/decode_test/wer_4
 
 %WER 30.16 [ 2706 / 8972, 243 ins, 825 del, 1638 sub ] exp/tri2b1000/decode_dev/wer_5
 %WER 29.47 [ 7888 / 26767, 787 ins, 2092 del, 5009 sub ] exp/tri2b1000/decode_test/wer_5
+%WER 26.86 [ 2410 / 8972, 130 ins, 927 del, 1353 sub ] exp/dnn4_pretrain-dbn_dnntri2b1000/decode_dev/wer_4
+%WER 26.63 [ 7127 / 26767, 446 ins, 2298 del, 4383 sub ] exp/dnn4_pretrain-dbn_dnntri2b1000/decode_test/wer_4
 
 %WER 24.75 [ 2221 / 8972, 242 ins, 681 del, 1298 sub ] exp/tri2b/decode_dev/wer_6
 %WER 24.25 [ 6490 / 26767, 692 ins, 1675 del, 4123 sub ] exp/tri2b/decode_test/wer_6
+%WER 20.17 [ 1810 / 8972, 173 ins, 600 del, 1037 sub ] exp/dnn4_pretrain-dbn_dnntri2b/decode_dev/wer_4
+%WER 18.98 [ 5081 / 26767, 434 ins, 1474 del, 3173 sub ] exp/dnn4_pretrain-dbn_dnntri2b/decode_test/wer_4
 
-tri2b mpe
+--tri2b mpe--
 %WER 44.29 [ 11855 / 26767, 849 ins, 3980 del, 7026 sub ] exp/tri2b100_mpe/decode_it3/wer_4
 %WER 44.59 [ 11935 / 26767, 963 ins, 3783 del, 7189 sub ] exp/tri2b100_mpe/decode_it4/wer_4
 
@@ -85,7 +96,7 @@ tri2b mpe
 %WER 23.09 [ 6181 / 26767, 558 ins, 1725 del, 3898 sub ] exp/tri2b_mpe/decode_it3/wer_8
 %WER 23.07 [ 6174 / 26767, 581 ins, 1690 del, 3903 sub ] exp/tri2b_mpe/decode_it4/wer_8
 
-tri3b
+--tri3b--
 %WER 44.69 [ 4010 / 8972, 294 ins, 1464 del, 2252 sub ] exp/tri3b100/decode_dev/wer_2
 %WER 45.56 [ 4088 / 8972, 177 ins, 1762 del, 2149 sub ] exp/tri3b100/decode_dev.si/wer_4
 %WER 43.82 [ 11728 / 26767, 723 ins, 4426 del, 6579 sub ] exp/tri3b100/decode_test/wer_3
@@ -112,4 +123,5 @@ tri3b
 %WER 24.00 [ 6423 / 26767, 633 ins, 1730 del, 4060 sub ] exp/tri3b/decode_test.si/wer_6
 
 ================================
+
 
